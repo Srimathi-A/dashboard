@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finance Dashboard</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="grid grid-cols-12 gap-3">
+        <div class="col-span-12 md:col-span-2 lg:col-span-2">
+            <aside class="w-64 h-screen bg-[#1D2233] flex flex-col justify-between p-6">
+    <!-- Logo -->
+    <div>
+      <div class="flex items-center space-x-2 mb-6">
+        <div class="bg-white p-2 rounded">
+          <i data-lucide="bar-chart-3" class="text-[#1D2233] w-6 h-6"></i>
+        </div>
+        <h1 class="font-bold text-white text-lg">FINANCE<br>DASHBOARD</h1>
+        
+      </div>
+
+      <hr class="border-gray-100 mb-6 border-2">
+
+      <!-- Navigation -->
+      <nav class="space-y-4">
+        <a href="#" class="flex items-center space-x-3 text-blue-400">
+          <i data-lucide="pie-chart" class="w-5 h-5"></i>
+          <span>Overview</span>
+        </a>
+        <a href="#" class="flex items-center space-x-3 text-white hover:text-blue-400">
+          <i data-lucide="layout" class="w-5 h-5"></i>
+          <span>Balance Sheet</span>
+        </a>
+        <a href="#" class="flex items-center space-x-3 text-white hover:text-blue-400">
+          <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+          <span>Cash Flow</span>
+        </a>
+        <a href="#" class="flex items-center space-x-3 text-white hover:text-blue-400">
+          <i data-lucide="bar-chart" class="w-5 h-5"></i>
+          <span>Aging Report</span>
+        </a>
+        <a href="#" class="flex items-center space-x-3 text-white hover:text-blue-400">
+          <i data-lucide="target" class="w-5 h-5"></i>
+          <span>Forecasting</span>
+        </a>
+      </nav>
+
+      <hr class="border-gray-100 my-6 border-2">
+
+      <!-- Scenario -->
+      <div class="text-sm text-gray-300 mb-2 text-center">Scenario</div>
+      <div class="flex space-x-2 mb-6 justify-center">
+        <button id="mtdBtn" onclick="setScenario('MTD')" class="bg-white text-black px-3 py-1 rounded">MTD</button>
+        <button id="ytdBtn" onclick="setScenario('YTD')" class="bg-gray-600 text-white px-3 py-1 rounded">YTD</button>
+      </div>
+
+      <!-- Benchmark -->
+      <div class="text-sm text-gray-300 mb-2 text-center">Benchmark</div>
+      <div class="flex space-x-2">
+        <button id="budgetBtn" onclick="setBenchmark('Budget')" class="bg-gray-600 text-gray-400 px-3 py-1 rounded">vs Budget</button>
+        <button id="lastYearBtn" onclick="setBenchmark('LastYear')" class="bg-white text-black px-3 py-1 rounded">vs Last Year</button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-gray-500 text-xs mt-6">
+      © 2023. Metricalist BI Solutions
+    </div>
+  </aside>
+        </div>
+        <div class="col-span-12 md:col-span-7 lg:col-span-7 px-5">
+         <div class="grid grid-cols-4 gap-4 mb-6">
+    <div class="bg-[#262D47] p-4 rounded-lg shadow">
+      <h2 class="text-sm text-gray-400">Revenue</h2>
+      <p class="text-2xl text-cyan-400 font-semibold">3.62M</p>
+      <p class="text-xs text-gray-400">Benchmark: 1.52M (+137.94%)</p>
+      <canvas id="revenueChart" height="40"></canvas>
+    </div>
+    <div class="bg-[#262D47] p-4 rounded-lg shadow">
+      <h2 class="text-sm text-gray-400">COGS</h2>
+      <p class="text-2xl text-red-400 font-semibold">2.14M!</p>
+      <p class="text-xs text-gray-400">Benchmark: 1.06M (-102.33%)</p>
+      <canvas id="cogsChart" height="40"></canvas>
+    </div>
+    <div class="bg-[#262D47] p-4 rounded-lg shadow">
+      <h2 class="text-sm text-gray-400">Gross Profit</h2>
+      <p class="text-2xl text-cyan-300 font-semibold">1.48M</p>
+      <p class="text-xs text-gray-400">Benchmark: 0.46M (+219.4%)</p>
+      <canvas id="gpChart" height="40"></canvas>
+    </div>
+    <div class="bg-[#262D47] p-4 rounded-lg shadow">
+      <h2 class="text-sm text-gray-400">Net Profit</h2>
+      <p class="text-2xl text-teal-300 font-semibold">0.57M</p>
+      <p class="text-xs text-gray-400">Benchmark: -0.35M (+263.16%)</p>
+      <canvas id="npChart" height="40"></canvas>
+    </div>
+  </div>
+
+  <!-- Ratio KPIs -->
+  <div class="grid grid-cols-3 gap-4 mb-6">
+    <div class="bg-[#262D47] p-4 rounded-lg shadow text-center">
+      <h3 class="text-sm text-gray-400">Gross Profit Margin</h3>
+      <div class="text-2xl text-cyan-400 font-bold">40.83%</div>
+    </div>
+    <div class="bg-[#262D47] p-4 rounded-lg shadow text-center">
+      <h3 class="text-sm text-gray-400">Operating Expense Ratio</h3>
+      <div class="text-2xl text-cyan-400 font-bold">25.01%</div>
+    </div>
+    <div class="bg-[#262D47] p-4 rounded-lg shadow text-center">
+      <h3 class="text-sm text-gray-400">Net Profit Margin</h3>
+      <div class="text-2xl text-cyan-400 font-bold">15.82%</div>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="grid grid-cols-2 gap-4 mb-6">
+    <div class="bg-[#262D47] p-4 rounded-lg shadow">
+      <h3 class="text-sm text-gray-400 mb-2">Revenue • COGS • Gross Profit Margin</h3>
+      <canvas id="leftBarChart" height="180"></canvas>
+    </div>
+    <div class="bg-[#262D47] p-4 rounded-lg shadow">
+      <h3 class="text-sm text-gray-400 mb-2">Gross Profit • OPEX • Net Profit Margin</h3>
+      <canvas id="rightBarChart" height="180"></canvas>
+    </div>
+  </div>
+
+  <!-- Assets vs Liabilities -->
+  <div class="grid grid-cols-2 gap-4">
+    <div class="bg-[#262D47] p-4 rounded-lg shadow">
+      <div class="flex justify-between mb-2 bg-gray-500 py-2 px-2">
+        <h4 class="text-sm text-gray-300">Total Assets</h4>
+        <span class="text-xl font-semibold">25,045,853</span>
+      </div>
+      <div class="text-sm text-gray-400 space-y-1">
+        <p><span class="text-cyan-300 font-semibold">795,404</span> Cash & Bank Bal.</p>
+        <p><span class="text-cyan-300 font-semibold">2,686,247</span> Deposits, Adv. & Prepay...</p>
+        <p><span class="text-cyan-300 font-semibold">3,933,520</span> Account Receivables</p>
+        <p><span class="text-cyan-300 font-semibold">221,798</span> Inventory</p>
+      </div>
+    </div>
+    <div class="bg-[#262D47] p-4 rounded-lg shadow">
+      <div class="flex justify-between  mb-2 bg-red-200 py-2 px-2">
+        <h4 class="text-sm text-gray-100">Total Liabilities</h4>
+        <span class="text-xl font-semibold">25,045,853</span>
+      </div>
+      <div class="text-sm text-gray-400 space-y-1">
+        <p><span class="text-pink-300 font-semibold">70,234</span> Wages Payable</p>
+        <p><span class="text-pink-300 font-semibold">2,439,345</span> Prov. & Accruals</p>
+        <p><span class="text-pink-300 font-semibold">2,721,601</span> Account Payables</p>
+        <p><span class="text-pink-300 font-semibold">1,236,240</span> Other Payable</p>
+      </div>
+    </div>
+  </div>
+
+        </div>
+        <div class="col-span-12 md:col-span-3 lg:col-span-3 gap-3">
+            <label class="text-gray-300">Showing data for:</label>
+               <div class="flex items-center gap-4 py-2 text-sm">
+    
+    <select class="bg-[#262D47] text-white p-2 rounded">
+      <option>Last</option>
+      <option>First</option>
+    </select>
+    <input type="number" value="5" class="bg-[#262D47] w-16 text-white text-center p-2 rounded"/>
+    <select class="bg-[#262D47] text-white p-2 rounded">
+      <option>Years</option>
+      <option>Months</option>
+    </select>
+    <input type="text" readonly value="4/7/2018 - 4/6/2023" class="ml-auto text-gray-400 bg-transparent border-none text-xs" />
+  </div>
+
+  <!-- Income Statement Chart -->
+  <div class="bg-[#262D47] p-4 rounded-lg shadow">
+    <h2 class="text-lg mb-4 font-semibold">Income Statement</h2>
+    <canvas id="incomeStatementChart" height="200"></canvas>
+  </div>
+
+  <!-- Smart Insights -->
+   <div class="py-3">
+  <div class="bg-[#262D47] p-4 rounded-lg shadow ">
+    <h2 class="text-lg mb-4 font-semibold">Smart Insights</h2>
+    <div class="max-h-72 overflow-y-auto text-sm text-gray-200 space-y-3">
+      <p><strong>Between January 2022 and February 2023</strong>, <span class="text-cyan-400">Gross Profit Margin</span> had the largest increase (<span class="text-green-400">177.57%</span>) while <span class="text-pink-400">COGS</span> had the largest decrease (<span class="text-red-400">46.68%</span>).</p>
+
+      <p><span class="text-cyan-300">Gross Profit Margin</span> started trending up on <strong>November 2022</strong>, rising by <span class="text-green-300">12.08%</span> (0.04) in 3 months.</p>
+
+      <p><span class="text-rose-300">OPEX</span> jumped from <strong>983,328.71</strong> to <strong>1,340,955.37</strong> during its steepest incline between <strong>August 2022</strong> and <strong>January 2023</strong>.</p>
+
+      <p>We found two anomalies, a high for <span class="text-pink-300">OPEX</span> on <strong>December 2022</strong> (<strong>2,395,911.48</strong>) and a low for <span class="text-teal-300">Net Profit Margin</span> on <strong>April 2022</strong> (<strong>-0.95</strong>).</p>
+
+      <p>The most recent anomaly was in <strong>December 2022</strong>, when <span class="text-pink-300">OPEX</span> had a high value of <strong>2,395,911.48</strong>.</p>
+
+      <p><span class="text-blue-300">Revenue</span> experienced the longest period of growth (<strong>626,542</strong>) between <strong>Friday, July 1, 2022</strong> and <strong>Thursday, December 1, 2022</strong>.</p>
+    </div>
+  </div>
+   </div>
+
+        </div>
+    </div>
+
+
+
+    <script>
+    lucide.createIcons();
+
+    function setScenario(type) {
+      const mtdBtn = document.getElementById('mtdBtn');
+      const ytdBtn = document.getElementById('ytdBtn');
+      if (type === 'MTD') {
+        mtdBtn.className = "bg-white text-black px-3 py-1 rounded";
+        ytdBtn.className = "bg-gray-600 text-white px-3 py-1 rounded";
+      } else {
+        ytdBtn.className = "bg-white text-black px-3 py-1 rounded";
+        mtdBtn.className = "bg-gray-600 text-white px-3 py-1 rounded";
+      }
+    }
+
+    function setBenchmark(type) {
+      const budgetBtn = document.getElementById('budgetBtn');
+      const lastYearBtn = document.getElementById('lastYearBtn');
+      if (type === 'Budget') {
+        budgetBtn.className = "bg-white text-black px-3 py-1 rounded";
+        lastYearBtn.className = "bg-gray-600 text-gray-400 px-3 py-1 rounded";
+      } else {
+        lastYearBtn.className = "bg-white text-black px-3 py-1 rounded";
+        budgetBtn.className = "bg-gray-600 text-gray-400 px-3 py-1 rounded";
+      }
+    }
+
+     const makeLineChart = (id) => {
+      return new Chart(document.getElementById(id), {
+        type: 'line',
+        data: {
+          labels: Array.from({length: 6}, (_, i) => `W${i+1}`),
+          datasets: [{
+            label: 'Data',
+            data: [1, 3, 2, 5, 4, 6],
+            borderColor: '#38bdf8',
+            fill: false,
+            tension: 0.4
+          }]
+        },
+        options: {responsive: true, plugins: {legend: {display: false}}, scales: {x: {display: false}, y: {display: false}}}
+      });
+    };
+
+    makeLineChart('revenueChart');
+    makeLineChart('cogsChart');
+    makeLineChart('gpChart');
+    makeLineChart('npChart');
+
+    new Chart(document.getElementById('leftBarChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+        datasets: [
+          { label: 'Revenue', data: [3.6, 3.8, 3.2, 3.9], backgroundColor: '#38bdf8' },
+          { label: 'COGS', data: [2.1, 2.2, 1.9, 2.3], backgroundColor: '#f87171' },
+          { label: 'GPM', data: [40, 42, 38, 45], type: 'line', borderColor: '#a78bfa', tension: 0.4 }
+        ]
+      },
+      options: {responsive: true}
+    });
+
+    new Chart(document.getElementById('rightBarChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+        datasets: [
+          { label: 'Gross Profit', data: [1.5, 1.6, 1.3, 1.8], backgroundColor: '#67e8f9' },
+          { label: 'OPEX', data: [0.9, 1.0, 1.1, 0.95], backgroundColor: '#fb7185' },
+          { label: 'NPM', data: [15, 16, 14, 18], type: 'line', borderColor: '#facc15', tension: 0.4 }
+        ]
+      },
+      options: {responsive: true}
+    });
+
+    new Chart(document.getElementById('incomeStatementChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Revenue', 'COGS', 'Gross Profit', 'OPEX', 'Net Profit'],
+        datasets: [{
+          label: 'Amount (in M)',
+          data: [2.14, 1.48, 0.91, 1.34, 0.57],
+          backgroundColor: [
+            '#3b82f6',
+            '#f87171',
+            '#22d3ee',
+            '#fb7185',
+            '#34d399'
+          ],
+          borderRadius: 6,
+          barThickness: 28
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: {
+            grid: { color: '#374151' },
+            ticks: { color: '#9ca3af' }
+          },
+          y: {
+            grid: { color: '#374151' },
+            ticks: { color: '#9ca3af' }
+          }
+        }
+      }
+    });
+  </script>
+
+</body>
